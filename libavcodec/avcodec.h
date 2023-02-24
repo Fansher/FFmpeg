@@ -380,6 +380,7 @@ struct AVCodecInternal;
  * structure field names for historic reasons or brevity.
  * sizeof(AVCodecContext) must not be used outside libav*.
  */
+//AVCodecContext结构体表示程序运行当前codec使用的上下文，着重于所有codec的共有属性
 typedef struct AVCodecContext {
     /**
      * information on struct for av_log
@@ -388,8 +389,11 @@ typedef struct AVCodecContext {
     const AVClass *av_class;
     int log_level_offset;
 
+    //编解码器类型，区分是音频、视频还是其他
     enum AVMediaType codec_type; /* see AVMEDIA_TYPE_xxx */
+    //编解码器结构体指针
     const struct AVCodec  *codec;
+    //编解码器ID号，每一个编解码器都有一个唯一的ID号
     enum AVCodecID     codec_id; /* see AV_CODEC_ID_xxx */
 
     /**
@@ -407,6 +411,10 @@ typedef struct AVCodecContext {
      */
     unsigned int codec_tag;
 
+    //私有数据，该成员关联各个编解码器独有的属性，比如x264的X264Context，x265的libx265Context
+    //使用方法(x265为例)：
+    //AVCodecContext *avctx
+    //libx265Context *ctx = avctx->priv_data;
     void *priv_data;
 
     /**
@@ -430,6 +438,7 @@ typedef struct AVCodecContext {
      * - decoding: Set by user, may be overwritten by libavcodec
      *             if this info is available in the stream
      */
+    //平均码率值，通过ffmpeg层参数配置生效（单位是bps），会被编码器参数设置覆盖
     int64_t bit_rate;
 
     /**
